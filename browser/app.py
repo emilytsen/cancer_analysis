@@ -3,6 +3,10 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st 
 
+from data.data_loader import load_data
+from data.data_visualization import create_visualization
+from analysis.data_analysis import analyze_data
+
 # app config 
 # emojis linmk: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Cancer Analisys",
@@ -10,10 +14,16 @@ st.set_page_config(page_title="Cancer Analisys",
                    layout="wide"
                    )
 
+# main page:
 
-df = pd.read_csv('/Users/emilytsen/Documents/courses/ds_cancer/df/df_countrys.csv')
+st.title(":bar_chart: Cancer Analisys")
+st.markdown("##")
 
-#st.dataframe(df)
+# Carregue os dados
+file_path = '/Users/emilytsen/Documents/courses/ds_cancer/df/df_countrys.csv'
+df = load_data(file_path)
+st.dataframe(df)
+
 
 #sidebar config
 
@@ -36,14 +46,10 @@ df_selection = df.query(
 
 st.dataframe(df_selection)
 
-# main page:
-
-st.title(":bar_chart: Cancer Analisys")
-st.markdown("##")
 
 # top countrys:
 
-total_deaths = int(df_selection["Total Deaths"].sum())
-average_rating = round(df_selection["Average Rating"].mean(), 1)
-rating = ":white_exclamation_mark:" * int(round(average_rating, 0))
+# total_deaths = int(df_selection["Total Deaths"].sum())
+# average_rating = round(df_selection["Average Rating"].mean(), 1)
+# rating = ":white_exclamation_mark:" * int(round(average_rating, 0))
 
