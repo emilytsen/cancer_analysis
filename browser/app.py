@@ -21,13 +21,54 @@ st.markdown("##")
 
 # Carregue os dados
 file_path = '/Users/emilytsen/Documents/courses/ds_cancer/df/df_countrys.csv'
-df = load_data(file_path)
-st.dataframe(df)
+colunas_cancer = [
+    'LIVER CANCER', 'KIDNEY CANCER', 'LARYNX CANCER', 'BREAST CANCER',
+    'THYROID CANCER', 'STOMACH CANCER', 'BLADDER CANCER', 'UTERINE CANCER',
+    'OVARIAN CANCER', 'CERVICAL CANCER', 'PROSTATE CANCER', 'PANCREATIC CANCER',
+    'ESOPHAGEAL CANCER', 'TESTICULAR CANCER', 'NASOPHARYNX CANCER', 'OTHER PHARYNX CANCER',
+    'COLON AND RECTUM CANCER', 'NON-MELANOMA SKIN CANCER', 'LIP AND ORAL CAVITY CANCER',
+    'BRAIN AND NERVOUS SYSTEM CANCER', 'TRACHEAL, BRONCHUS, AND LUNG CANCER',
+    'GALLBLADDER AND BILIARY TRACT CANCER', 'MALIGNANT SKIN MELANOMA', 'LEUKEMIA',
+    'HODGKIN LYMPHOMA', 'MULTIPLE MYELOMA', 'OTHER CANCERS'
+]
+df = load_data(file_path, colunas_cancer)
 
 
-#sidebar config
 
-st.sidebar.header("Filter here:")
+#sidebar functions
+
+def calculate_total_deaths_for_country_and_cancer(df, selected_country, selected_cancer):
+    # Filtra o DataFrame com base no país selecionado
+    filtered_df = df[df['COUNTRY'] == selected_country]
+
+    # Calcula o total de mortes para o câncer selecionado
+    total_deaths = filtered_df[selected_cancer].sum()
+    
+    return total_deaths
+
+
+
+# Sidebar config
+st.sidebar.header("Filter Type Cancer/Country:")
+
+selected_country = st.sidebar.selectbox(
+    "Select a Country:",
+    options=df["COUNTRY"].unique()
+)
+
+selected_cancer = st.sidebar.selectbox(
+    "Select a Cancer Type:",
+    options=df.columns[3:]  # Supondo que as colunas de câncer começam a partir da 4ª coluna
+)
+
+# Verificar se o usuário selecionou um país e um câncer
+if selected_country and selected_cancer:
+    total_deaths = calculate_total_deaths_for_country_and_cancer(df, selected_country, selected_cancer)
+    st.success(f"Total Deaths for {selected_country} in {selected_cancer}: {total_deaths}")
+
+
+
+st.sidebar.header("Filter Country/Years:")
 
 country = st.sidebar.multiselect(
     "Select The Country:",
@@ -40,9 +81,14 @@ year = st.sidebar.multiselect(
     default=df["YEAR"].unique()
 )
 
-df_selection = df.query(
-    "COUNTRY == @country & YEAR == @year"
+cancer_type = st.sidebar.multiselect(
+    "Select Cancer Type:",
+    options=df.columns[3:],  # Considere as colunas de câncer a partir da quarta coluna em diante
+    default=df.columns[3],  # Escolha um tipo de câncer padrão (opcional)
 )
+
+
+df_selection = df.loc[df['COUNTRY'].isin(country) & df['YEAR'].isin(year), ['COUNTRY', 'YEAR'] + cancer_type]
 
 st.dataframe(df_selection)
 
