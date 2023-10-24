@@ -41,3 +41,9 @@ st.dataframe(df_selection)
 st.title(":bar_chart: Cancer Analisys")
 st.markdown("##")
 
+# top countrys:
+
+total_deaths = int(df_selection["Total Deaths"].sum())
+average_rating = round(df_selection["Average Rating"].mean(), 1)
+rating = ":white_exclamation_mark:" * int(round(average_rating, 0))
+
